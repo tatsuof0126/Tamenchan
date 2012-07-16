@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="top|center_horizontal"
+	android:baselineAligned="true"
+    android:orientation="vertical" >
+
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="20dp"
+       	android:text="" />
+    
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/titlelogo"
+    	android:layout_width="fill_parent"
+    	android:layout_height="60dp"
+    	android:gravity="center"
+		android:baselineAlignedChildIndex="1"
+    	android:orientation="horizontal" >
+    	
+		<ImageView
+			android:src="@drawable/m1"
+			android:layout_gravity="center_horizontal"
+			android:adjustViewBounds="true"
+			android:scaleType="fitXY"
+			android:layout_width="30dp"
+			android:layout_height="40dp" />
+			
+	    <TextView
+			android:layout_gravity="center_horizontal"
+   		    android:layout_width="wrap_content"
+       		android:layout_height="wrap_content"
+		    android:gravity="center"
+		    android:padding="5dp"
+		    android:textStyle="bold|italic"
+		    android:textSize="22dp"
+    	   	android:text="  ためんちゃんβ  " />
+    	
+		<ImageView
+			android:src="@drawable/m9"
+			android:layout_gravity="center_horizontal"
+			android:adjustViewBounds="true"
+			android:scaleType="fitXY"
+			android:layout_width="30dp"
+			android:layout_height="40dp" />
+    
+    </LinearLayout>    
+    
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="25dp"
+       	android:text="" />
+    
+	<Button
+		android:text="ゲームスタート"
+		android:id="@+id/gamestart"
+		android:layout_width="150dp"
+		android:layout_height="wrap_content" />
+		
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="25dp"
+       	android:text="" />
+    
+	<Button
+		android:text="アプリについて"
+		android:id="@+id/option"
+		android:layout_width="150dp"
+		android:layout_height="wrap_content" />
+
+</LinearLayout>

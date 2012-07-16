@@ -1,0 +1,9 @@
+# ignore files
+.classpath
+.project
+project.properties
+
+assets/
+bin/
+gen/
+

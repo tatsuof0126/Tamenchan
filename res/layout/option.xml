@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="top|center_horizontal"
+	android:baselineAligned="true"
+    android:orientation="vertical" >
+
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="20dp"
+       	android:text="" />
+
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="wrap_content"
+	    android:textStyle="bold"
+	    android:textSize="18dp"
+       	android:text="アプリについて" />
+    
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="15dp"
+       	android:text="" />
+
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="wrap_content"
+       	android:text="「ためんちゃんβ」は、手牌が何待ちかを答えるゲームです。\n表示される手牌の待ち牌を選択して「判定」ボタンを押すと、結果が表示されます。\n全５問で何問正解できるかを競います。" />
+
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="20dp"
+       	android:text="" />
+    
+	<Button
+		android:text="メニューに戻る"
+		android:id="@+id/menu"
+		android:layout_width="150dp"
+		android:layout_height="wrap_content" />
+
+</LinearLayout>
