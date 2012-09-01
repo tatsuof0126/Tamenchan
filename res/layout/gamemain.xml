@@ -134,7 +134,7 @@
    	    android:layout_width="fill_parent"
        	android:layout_height="20dp"
        	android:gravity="center_vertical"
-       	android:text="この手牌は何待ち？" />
+       	android:text="上の手牌は何待ち？" />
     
     <TextView
    	    android:layout_width="fill_parent"
@@ -305,4 +305,20 @@
 		
     </LinearLayout>
 
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="5dp"
+       	android:text="" />
+    
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="30dp"
+       	android:gravity="center_vertical"
+       	android:text="  残り時間" />
+    
+	<com.tatsuo.tamenchan.view.TimerView
+		android:id="@+id/timer"
+        android:layout_width="fill_parent"
+       	android:layout_height="wrap_content" />
+       	
 </LinearLayout>

@@ -26,7 +26,18 @@
     <TextView
    	    android:layout_width="fill_parent"
        	android:layout_height="wrap_content"
-       	android:text="「ためんちゃんβ」は、手牌が何待ちかを答えるゲームです。\n表示される手牌の待ち牌を選択して「判定」ボタンを押すと、結果が表示されます。\n全５問で何問正解できるかを競います。" />
+       	android:text="@string/app_info" />
+
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="15dp"
+       	android:text="" />
+
+    <TextView
+    	android:id="@+id/version"
+   	    android:layout_width="fill_parent"
+       	android:layout_height="wrap_content"
+       	android:text="" />
 
     <TextView
    	    android:layout_width="fill_parent"

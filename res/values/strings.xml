@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="hello">Hello World, TamenchanMainActivity!</string>
     <string name="app_name">ためんちゃんβ</string>
+    <string name="app_info">「ためんちゃんβ」は、手牌が何待ちかを答えるゲームです。\n表示される手牌の待ち牌を選択して「判定」ボタンを押すと、結果が表示されます。\n全５問で何問正解できるかを競います。</string>
+    
+    <string name="version_string">バージョン：	%1$s</string>
 
 </resources>

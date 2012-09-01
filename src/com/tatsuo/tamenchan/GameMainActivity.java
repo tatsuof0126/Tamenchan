@@ -1,10 +1,15 @@
 package com.tatsuo.tamenchan;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,15 +20,27 @@ import android.widget.TextView;
 import com.tatsuo.tamenchan.domain.TamenchanScore;
 import com.tatsuo.tamenchan.domain.Tehai;
 import com.tatsuo.tamenchan.domain.TenpaiChecker;
+import com.tatsuo.tamenchan.view.TimerView;
 
 public class GameMainActivity extends Activity {
-	private TamenchanScore score = null;
+	private TamenchanScore tamenchanScore = null;
 	
 	private Tehai tehai = null;
+	private int remainingTime = 0;
 	private boolean select[] = new boolean[10];
 	private boolean judged = false;
+	private boolean questionStandBy = false;
+	private boolean questionShowing = false;
+	
+	private Handler handler = new Handler();
+    Timer tehaiOpenTimer = null;
+    Timer timer = null;
 	
 	private static final int MAX_QUESTION = 5;
+	
+	private static int[] MACHI_ARRAY = new int[100];
+	// レア待ちと見なす待ち数
+	private static final int RARE_MACHI = 7; 
 	
 	private static final int[] haiImageResourceId = new int[10];
 	private static final int[] haiImageId = new int[10];
@@ -31,10 +48,15 @@ public class GameMainActivity extends Activity {
 	
 	private static final int ALPHA_SELECTED = 255;
 	private static final int ALPHA_NO_SELECTED = 100;
+	
 	private static final String BUTTON_JUDGE = "judge";
 	private static final String BUTTON_MENU  = "menu";
 	
-	public static final String KEY_SCORE = "score";
+	private static final String INITPLAY_PREF_NAME = "initplay";
+	private static final String INITPLAY_KEY = "initplay";
+	
+	// インテントのキー
+	static final String KEY_SCORE = "score";
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,15 +64,15 @@ public class GameMainActivity extends Activity {
         setContentView(R.layout.gamemain);
         
         // ゲーム初期化
-        score = new TamenchanScore();
+        tamenchanScore = new TamenchanScore();
         
         // 問題初期化
         makeQuestion();
         
-        // ビューの固定部分
+        // リスナーをセット
         for(int i=1;i<=9;i++){
         	ImageView haiImage = (ImageView)findViewById(haiImageId[i]);
-        	haiImage.setTag(new Integer(i));
+        	haiImage.setTag(Integer.valueOf(i));
         	haiImage.setOnClickListener(new HaiClickListener());
         }        
         
@@ -63,9 +85,23 @@ public class GameMainActivity extends Activity {
         menuButton.setOnClickListener(new ButtonClickListener());
     }
     
+    @Override
+    public void onDestroy(){
+    	super.onDestroy();
+    	
+		if(tehaiOpenTimer != null){
+			tehaiOpenTimer.cancel();
+			tehaiOpenTimer.purge();
+		}
+		if(timer != null){
+			timer.cancel();
+			timer.purge();
+		}    	
+    }
+    
     class HaiClickListener implements OnClickListener {
     	public void onClick(View v){
-    		if(judged == true){return;}
+    		if(judged == true || questionShowing == false){return;}
     		
     		int haiNum = ((Integer)v.getTag()).intValue();
         	ImageView haiImage = (ImageView)findViewById(haiImageId[haiNum]);
@@ -82,9 +118,7 @@ public class GameMainActivity extends Activity {
         
     class ButtonClickListener implements OnClickListener {
     	public void onClick(View v){
-    		if(BUTTON_JUDGE.equals(v.getTag())){
-    			Log.i("BUTTON",BUTTON_JUDGE);
-    			
+    		if(BUTTON_JUDGE.equals(v.getTag()) && questionShowing == true && judged == false){
     	    	TenpaiChecker checker = new TenpaiChecker();
         		boolean[] machi = checker.checkMachihai(tehai);
     			boolean result = judge(machi, select);
@@ -92,34 +126,220 @@ public class GameMainActivity extends Activity {
     			String titleStr = "";
     			String messageStr = "";
     			if(result == true){
-    				if(judged == false){
-    					score.setScore(score.getScore()+1);
-    				}
+    				int score = (int)((remainingTime+1000-1) / 1000);
+    				tamenchanScore.setScore(tamenchanScore.getScore()+score);
+    				
     				titleStr = "ためんちゃん！";
-       				messageStr = "正解です";
+       				messageStr = "正解です   "+score+"点獲得";
     			} else {
-    				titleStr = "だめじゃん！";
+    				titleStr = "だめじゃん．．．";
        				messageStr = "正しくは 「"+makeMachiStr(machi)+"」です\n"
-       				+"あなたの回答 「"+makeMachiStr(select)+"」";
+       					+"あなたの回答 「"+makeMachiStr(select)+"」";
     			}
 
     	    	judged = true;
     			
-    			AlertDialog.Builder dialog
-    				= new AlertDialog.Builder(GameMainActivity.this);
-    			
-    			dialog.setTitle(titleStr);
-    			dialog.setMessage(messageStr);
-    			dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						nextQuestion();
-					}
-				});
-    			dialog.show();
+    	    	showAnswer(titleStr, messageStr);
+    	    	
     		} else if (BUTTON_MENU.equals(v.getTag())){
     			finish();    			
     		}
+    	}
+    }
+    
+    private void makeQuestion(){
+    	tamenchanScore.setQuestion(tamenchanScore.getQuestion()+1);
+    	judged = false;
+    	remainingTime = 20000;
+    	
+    	TextView headerText = (TextView)findViewById(R.id.header);
+    	headerText.setText("Question："+tamenchanScore.getQuestion() + " / " + MAX_QUESTION 
+    			+"     Score："+tamenchanScore.getScore());
+    	
+    	questionStandBy = false;
+    	
+        // 別スレッドで問題を作成
+        new Thread() {
+			@Override
+			public void run() {
+				setTehai();
+		        questionStandBy = true;
+			}
+		}.start();
+        
+        // 手牌を裏向きで表示
+		questionShowing = false;
+		for(int i=1;i<=13;i++){
+        	ImageView imageView = (ImageView)findViewById(tehaiImageId[i]);
+        	imageView.setImageResource(haiImageResourceId[0]);
+        }
+
+        // 回答部分を初期化して表示
+    	initChoice();
+        for(int i=1;i<=9;i++){
+        	ImageView haiImage = (ImageView)findViewById(haiImageId[i]);
+        	haiImage.setAlpha(ALPHA_NO_SELECTED);
+        }
+        
+        // 残り時間も初期化して表示
+        showTimer();
+                
+        // １問目かつ初回プレイだったらチュートリアルを表示、そうでない場合は問題を表示
+        if(tamenchanScore.getQuestion() == 1 && isInitialPlay() == true){
+        	showTutorial();
+        } else {
+        	showTehai();
+        }
+		
+    }
+    
+    private void nextQuestion(){
+    	if(tamenchanScore.getQuestion() < MAX_QUESTION){
+    		makeQuestion();
+    	} else {
+    		Intent intent = new Intent(this, ResultActivity.class);
+    		intent.putExtra(KEY_SCORE, tamenchanScore);
+    		startActivity(intent);
+    		finish();
+    	}
+    }
+    
+    private void setTehai(){
+    	tehai = new Tehai();
+    	TenpaiChecker checker = new TenpaiChecker();
+    	
+    	// 何面待ちの問題にするかを決定
+    	int questionMachiNum = MACHI_ARRAY[(int)(Math.random()*100)];
+    	
+		int haipaiCount = 0;
+    	while(true){
+    		haipaiCount++;
+    		
+    		tehai.haipai();
+    		boolean[] machi = checker.checkMachihai(tehai);
+    	
+    		int machiNum = 0;
+    		for(int i=0;i<machi.length;i++){
+    			if(machi[i] == true){
+    				machiNum++;
+    			}
+    		}
+    		
+    		// 予定の待ち数 または レア待ちになったら、それを問題にする
+    		// または10回以上配牌を繰り返して、予定の待ち数にならなかったら
+    		// １つ以上待ちがあるものを問題にする
+    		if(machiNum == questionMachiNum || machiNum >= RARE_MACHI
+    			|| (haipaiCount >= 10 && machiNum > 0) ){
+    			
+    	    	Log.i("MACHI -> ",questionMachiNum+" : "+machiNum+" : "+haipaiCount);
+
+    	    	// 配牌回数が10回以下の場合は時間稼ぎ
+    	    	for(int i=haipaiCount;i<=10;i++){
+    	    		checker.checkMachihai(tehai);
+    	    	}
+    			break;
+    		}
+    	}
+    }
+    
+    private void showTehai(){
+    	// ２秒後に手牌を表向きに表示
+    	tehaiOpenTimer = new Timer();
+    	tehaiOpenTimer.schedule(new TimerTask(){
+        	public void run(){
+        		handler.post(new Runnable() {
+					@Override
+					public void run() {
+						// 問題の準備ができてなければ待つ
+						while(questionStandBy == false){}
+						
+				        // 問題の手牌を表示
+				        int[] hai = tehai.getTehai();
+				        int num = 1;
+				        for(int i=1;i<hai.length;i++){
+				        	for(int j=0;j<hai[i];j++){
+				            	ImageView imageView = (ImageView)findViewById(tehaiImageId[num]);
+				            	imageView.setImageResource(haiImageResourceId[i]);
+				            	num++;
+				        	}
+				        }
+						questionShowing = true;
+
+						// タイマーをスタート
+						startTimer();
+					}
+        		});
+        	}
+        }, 2000);
+    }
+    
+    private void startTimer(){
+    	timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {							
+			@Override
+			public void run() {
+        		handler.post(new Runnable() {
+					@Override
+					public void run() {
+						if(judged == false){
+							remainingTime-=200;
+							showTimer();
+							if(remainingTime <= 0){
+								judged = true;
+								TenpaiChecker checker = new TenpaiChecker();
+								boolean[] machi = checker.checkMachihai(tehai);
+								showAnswer("時間切れ！" , "正解は「"+makeMachiStr(machi)+"」です");
+							}
+						}
+					}
+        		});
+			}
+		}, 200, 200);
+    }
+    
+    private void showTimer(){
+    	TimerView timerView = (TimerView)findViewById(R.id.timer);
+    	timerView.updateTimerView(remainingTime);
+    }
+    
+    private void showAnswer(String titleStr, String messageStr){
+    	tehaiOpenTimer.cancel();
+    	tehaiOpenTimer.purge();
+    	timer.cancel();
+    	timer.purge();
+    	
+		AlertDialog.Builder dialog
+			= new AlertDialog.Builder(GameMainActivity.this);
+	
+		dialog.setTitle(titleStr);
+		dialog.setMessage(messageStr);
+		dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				nextQuestion();
+			}
+		});
+		dialog.show();
+    }
+    
+    private void showTutorial(){
+		AlertDialog.Builder dialog
+			= new AlertDialog.Builder(GameMainActivity.this);
+
+		dialog.setTitle("ためんちゃんβの遊び方");
+		dialog.setMessage("上に表示される手牌の待ち牌を選択して「判定」ボタンを押してください。");
+		dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				showTehai();
+			}
+		});
+		dialog.show();
+    }
+
+    private void initChoice(){
+    	for(int i=0;i<select.length;i++){
+    		select[i] = false;
     	}
     }
     
@@ -130,70 +350,6 @@ public class GameMainActivity extends Activity {
     		}
     	}    	
     	return true;
-    }
-    
-    private void nextQuestion(){
-    	if(score.getQuestion() < MAX_QUESTION){
-    		makeQuestion();
-    	} else {
-    		Intent intent = new Intent(this, ResultActivity.class);
-    		intent.putExtra(KEY_SCORE, score);
-    		startActivity(intent);
-    		finish();
-    	}
-    }
-    
-    private void makeQuestion(){
-    	score.setQuestion(score.getQuestion()+1);
-    	judged = false;
-    	
-    	TextView headerText = (TextView)findViewById(R.id.header);
-    	headerText.setText("Question："+score.getQuestion() + " / " + MAX_QUESTION 
-    			+"     Score："+score.getScore());
-    	
-    	initChoice();
-        for(int i=1;i<=9;i++){
-        	ImageView haiImage = (ImageView)findViewById(haiImageId[i]);
-        	haiImage.setAlpha(ALPHA_NO_SELECTED);
-        }
-               
-        setTehai();    	
-        int[] hai = tehai.getTehai();
-        int num = 1;
-        for(int i=1;i<hai.length;i++){
-        	for(int j=0;j<hai[i];j++){
-            	ImageView imageView = (ImageView)findViewById(tehaiImageId[num]);
-            	imageView.setImageResource(haiImageResourceId[i]);
-            	num++;
-        	}
-        }
-    }
-    
-    private void setTehai(){
-    	tehai = new Tehai();
-    	TenpaiChecker checker = new TenpaiChecker();
-    	
-    	while(true){
-    		tehai.haipai();
-    		boolean[] machi = checker.checkMachihai(tehai);
-    	
-    		int num = 0;
-    		for(int i=0;i<machi.length;i++){
-    			if(machi[i] == true){
-    				num++;
-    			}
-    		}
-    		
-    		if(num > 1){
-    			break;
-    		}
-    	}
-    }
-    
-    private void initChoice(){
-    	for(int i=0;i<select.length;i++){
-    		select[i] = false;
-    	}
     }
     
     private String makeMachiStr(boolean[] machi){
@@ -217,7 +373,35 @@ public class GameMainActivity extends Activity {
 		return machiStr;
     }
     
+    private boolean isInitialPlay(){
+    	SharedPreferences preferences
+    		= getSharedPreferences(INITPLAY_PREF_NAME, MODE_PRIVATE);
+    	
+    	boolean initPlay = preferences.getBoolean(INITPLAY_KEY, true);
+    	
+    	if(initPlay == true){
+    		SharedPreferences.Editor editor = preferences.edit();
+    		editor.putBoolean(INITPLAY_KEY, false);
+    		editor.commit();
+    	}
+    	
+    	return initPlay;
+    }
+    
 	{
+		// 問題の待ち数の確率表（１つが１％）
+		MACHI_ARRAY = new int[]{
+				0,0,0,1,1,1,1,1,1,1,
+				1,1,1,1,1,1,1,1,1,1,
+				1,1,1,1,1,2,2,2,2,2,
+				2,2,2,2,2,2,2,2,2,2,
+				2,2,2,2,2,2,2,2,2,2,
+				3,3,3,3,3,3,3,3,3,3,
+				3,3,3,3,3,3,3,3,3,3,
+				3,3,3,3,3,4,4,4,4,4,
+				4,4,4,4,4,4,4,4,4,4,
+				5,5,5,5,5,5,5,6,6,6};
+		
 		tehaiImageId[0] = 0;
 		tehaiImageId[1] = R.id.tehai1;
 		tehaiImageId[2] = R.id.tehai2;

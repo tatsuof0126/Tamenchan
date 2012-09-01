@@ -9,19 +9,70 @@
        	android:layout_height="10dp"
        	android:text="" />    
 
-    <TextView
-    	android:id="@+id/result"
+    <TextView 
+    	android:id="@+id/resultmessage"
    	    android:layout_width="fill_parent"
        	android:layout_height="40dp"
 	    android:textSize="18dp"
        	android:gravity="center_vertical"
        	android:text="" />
+           	
+    <TextView
+    	android:id="@+id/rankinmessage"
+   	    android:layout_width="fill_parent"
+       	android:layout_height="wrap_content"
+	    android:textSize="18dp"
+       	android:text="" />
+
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="15dp"
+       	android:text="" />
+
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="wrap_content"
+	    android:textSize="18dp"
+       	android:text=" ハイスコア" />
     
     <TextView
    	    android:layout_width="fill_parent"
-       	android:layout_height="20dp"
-       	android:text="" />    
+       	android:layout_height="5dp"
+       	android:text="" />
+       	
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    	android:id="@+id/resulthiscorelist"
+    	android:layout_width="320dp"
+    	android:layout_height="wrap_content"
+    	android:gravity="center_horizontal">
+    	
+    	<TableRow
+    		android:layout_height="20dp">
+    		
+    		<TextView
+	   		    android:layout_width="50dp"
+				android:gravity="center"
+    			android:text="順位" />
+    		
+    		<TextView
+	   		    android:layout_width="180dp"
+				android:gravity="center"
+    			android:text="名前" />
+    		
+    		<TextView
+	   		    android:layout_width="90dp"
+				android:gravity="center"
+    			android:text="得点" />
+    	
+    	</TableRow>
+    	
+    </TableLayout>
 
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="20dp"
+       	android:text="" />
+       	
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     	android:layout_width="fill_parent"
     	android:layout_height="wrap_content"

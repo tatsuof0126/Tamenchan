@@ -25,5 +25,5 @@ public class TamenchanScore implements Serializable {
 	public void setScore(int score) {
 		this.score = score;
 	}
-	
+		
 }

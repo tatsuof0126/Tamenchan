@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="top|center_horizontal"
+	android:baselineAligned="true"
+    android:orientation="vertical" >
+
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="20dp"
+       	android:text="" />
+
+	<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    	android:layout_width="320dp"
+		android:layout_height="wrap_content" >
+		
+		<TableRow>
+		    <TextView
+		   	    android:layout_width="200dp"
+       			android:layout_height="wrap_content"
+			    android:textStyle="bold"
+			    android:textSize="18dp"
+       			android:text="ハイスコア" />
+       			
+			<Button
+				android:id="@+id/clearhiscore"
+				android:text="クリア"
+				android:layout_width="120dp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="right" />
+				
+		</TableRow>
+		
+	</TableLayout>
+    
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="10dp"
+       	android:text="" />
+       	
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    	android:id="@+id/hiscorelist"
+    	android:layout_width="320dp"
+    	android:layout_height="wrap_content"
+    	android:gravity="center_horizontal">
+    	
+    	<TableRow
+    		android:layout_height="20dp">
+    		
+    		<TextView
+	   		    android:layout_width="50dp"
+				android:gravity="center"
+    			android:text="順位" />
+    		
+    		<TextView
+	   		    android:layout_width="180dp"
+				android:gravity="center"
+    			android:text="名前" />
+    		
+    		<TextView
+	   		    android:layout_width="90dp"
+				android:gravity="center"
+    			android:text="得点" />
+    	
+    	</TableRow>
+    	
+    </TableLayout>
+
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="20dp"
+       	android:text="" />
+    
+	<Button
+		android:text="メニューに戻る"
+		android:id="@+id/menubutton"
+		android:layout_width="150dp"
+		android:layout_height="wrap_content" />
+
+</LinearLayout>

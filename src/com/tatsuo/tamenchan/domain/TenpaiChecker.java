@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TenpaiChecker {
-
+	
 	public static final int LOG_LEVEL_DEBUG = 1;
 	public static final int LOG_LEVEL_INFO = 5;
 	
@@ -37,7 +37,7 @@ public class TenpaiChecker {
 		List<Integer> kotsuList = new ArrayList<Integer>();
 		for(int i=1;i<=9;i++){
 			if(tehai.hai[i]>=3){
-				kotsuList.add(new Integer(i));
+				kotsuList.add(Integer.valueOf(i));
 			}
 		}
 		
@@ -184,15 +184,19 @@ public class TenpaiChecker {
 			tempTehai.hai[kotsuList.get(2).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(3).intValue()]-=3;
 			if(checkToitsu(tempTehai) == true){result = true;}
+			// 刻子４つ
+			tempTehai = tehai.copyTehai();
+			tempTehai.hai[kotsuList.get(0).intValue()]-=3;
+			tempTehai.hai[kotsuList.get(1).intValue()]-=3;
+			tempTehai.hai[kotsuList.get(2).intValue()]-=3;
+			tempTehai.hai[kotsuList.get(3).intValue()]-=3;
+			if(checkToitsu(tempTehai) == true){result = true;}
 			break;
 		default:
 			break;
 		}
 		
-		
 		return result;
-		
-		
 		
 	}
 	
@@ -200,7 +204,7 @@ public class TenpaiChecker {
 		List<Integer> toitsuList = new ArrayList<Integer>();
 		for(int i=1;i<=9;i++){
 			if(tehai.hai[i]>=2){
-				toitsuList.add(new Integer(i));
+				toitsuList.add(Integer.valueOf(i));
 			}
 		}
 		
