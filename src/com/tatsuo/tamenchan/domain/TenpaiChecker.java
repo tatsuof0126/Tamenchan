@@ -9,7 +9,7 @@ public class TenpaiChecker {
 	public static final int LOG_LEVEL_INFO = 5;
 	
 	private int logLevel = LOG_LEVEL_INFO;	
-	
+		
 	public boolean[] checkMachihai(Tehai tehai){
 		return checkMachihai(tehai, LOG_LEVEL_INFO);
 	}
@@ -33,6 +33,9 @@ public class TenpaiChecker {
 	
 	public boolean checkAgari(Tehai tehai){
 		boolean result = false;
+		
+		// 初めに七対子型をチェック
+		if(checkChiToitsu(tehai) == true){result = true;}
 		
 		List<Integer> kotsuList = new ArrayList<Integer>();
 		for(int i=1;i<=9;i++){
@@ -89,17 +92,17 @@ public class TenpaiChecker {
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(2).intValue()]-=3;
 			if(checkToitsu(tempTehai) == true){result = true;}
-			// 刻子２つ
+			// 刻子２つ（１つ目と２つ目の刻子を取る）
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(0).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(1).intValue()]-=3;
 			if(checkToitsu(tempTehai) == true){result = true;}
-			// 刻子２つ
+			// 刻子２つ（１つ目と３つ目の刻子を取る）
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(0).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(2).intValue()]-=3;
 			if(checkToitsu(tempTehai) == true){result = true;}
-			// 刻子２つ
+			// 刻子２つ（２つ目と３つ目の刻子を取る）
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(1).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(2).intValue()]-=3;
@@ -126,59 +129,59 @@ public class TenpaiChecker {
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(2).intValue()]-=3;
 			if(checkToitsu(tempTehai) == true){result = true;}
-			// 刻子１つ（３つ目の刻子を取る）
+			// 刻子１つ（４つ目の刻子を取る）
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(3).intValue()]-=3;
 			if(checkToitsu(tempTehai) == true){result = true;}
-			// 刻子２つ
+			// 刻子２つ（１つ目と２つ目の刻子を取る）
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(0).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(1).intValue()]-=3;
 			if(checkToitsu(tempTehai) == true){result = true;}
-			// 刻子２つ
+			// 刻子２つ（１つ目と３つ目の刻子を取る）
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(0).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(2).intValue()]-=3;
 			if(checkToitsu(tempTehai) == true){result = true;}
-			// 刻子２つ
+			// 刻子２つ（１つ目と４つ目の刻子を取る）
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(0).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(3).intValue()]-=3;
 			if(checkToitsu(tempTehai) == true){result = true;}
-			// 刻子２つ
+			// 刻子２つ（２つ目と３つ目の刻子を取る）
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(1).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(2).intValue()]-=3;
 			if(checkToitsu(tempTehai) == true){result = true;}
-			// 刻子２つ
+			// 刻子２つ（２つ目と４つ目の刻子を取る）
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(1).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(3).intValue()]-=3;
 			if(checkToitsu(tempTehai) == true){result = true;}
-			// 刻子２つ
+			// 刻子２つ（３つ目と４つ目の刻子を取る）
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(2).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(3).intValue()]-=3;
 			if(checkToitsu(tempTehai) == true){result = true;}
-			// 刻子３つ
+			// 刻子３つ（１つ目と２つ目と３つ目の刻子を取る）
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(0).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(1).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(2).intValue()]-=3;
 			if(checkToitsu(tempTehai) == true){result = true;}
-			// 刻子３つ
+			// 刻子３つ（１つ目と２つ目と４つ目の刻子を取る）
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(0).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(1).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(3).intValue()]-=3;
 			if(checkToitsu(tempTehai) == true){result = true;}
-			// 刻子３つ
+			// 刻子３つ（１つ目と３つ目と４つ目の刻子を取る）
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(0).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(2).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(3).intValue()]-=3;
 			if(checkToitsu(tempTehai) == true){result = true;}
-			// 刻子３つ
+			// 刻子３つ（２つ目と３つ目と４つ目の刻子を取る）
 			tempTehai = tehai.copyTehai();
 			tempTehai.hai[kotsuList.get(1).intValue()]-=3;
 			tempTehai.hai[kotsuList.get(2).intValue()]-=3;
@@ -219,6 +222,22 @@ public class TenpaiChecker {
 
 			boolean bool = checkShuntsu(tempTehai);
 			if(bool == true){return true;}
+		}
+		
+		return false;
+	}
+	
+	public boolean checkChiToitsu(Tehai tehai){
+		int toitsuNum = 0;
+		for(int i=1;i<=9;i++){
+			if(tehai.hai[i] == 2){
+				toitsuNum++;
+			}
+		}
+		
+		// 対子が７つなら七対子と判断
+		if(toitsuNum == 7){
+			return true;
 		}
 		
 		return false;

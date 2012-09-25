@@ -1,12 +1,27 @@
 package com.tatsuo.tamenchan;
 
-import com.tatsuo.tamenchan.domain.HiScore;
+import java.io.IOException;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.ParseException;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,6 +29,8 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import com.tatsuo.tamenchan.domain.HiScore;
 
 public class HiScoreActivity extends Activity {
 	
@@ -24,6 +41,8 @@ public class HiScoreActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hiscore);
+        
+        getHiScoreList();
         
         showHiScore();
         
@@ -62,6 +81,71 @@ public class HiScoreActivity extends Activity {
     		}
     	}
     }
+    
+    private void getHiScoreList(){
+    	HttpClient client = new DefaultHttpClient();
+    	HttpUriRequest request = new HttpGet("http://192.168.11.4:3000/hiscorelist");
+    	HttpResponse response = null;
+        
+    	try {
+    	    response = client.execute(request);
+    	}
+    	catch (ClientProtocolException e) {
+    		e.printStackTrace();
+    	}
+    	catch (IOException e){
+    		e.printStackTrace();
+    	}
+    	
+    	String json = null;
+    	
+    	if(response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+    		HttpEntity entity = response.getEntity();
+    		try {
+    			json = EntityUtils.toString(entity);
+    		} catch (ParseException e) {
+        		e.printStackTrace();
+    	    }
+    	    catch (IOException e) {
+        		e.printStackTrace();
+    	    }
+    	    finally {
+    	        try {
+    	            entity.consumeContent();
+    	        }
+    	        catch (IOException e) {
+    	    		e.printStackTrace();
+    	        }
+    	    }
+    		
+    	    Log.i("response",json);
+    		
+    	}
+    	
+    	client.getConnectionManager().shutdown();
+    	
+    	try{
+    		JSONArray jsonArray = new JSONArray(json);
+    		
+    		Log.i("length",""+jsonArray.length());
+    		for(int i=0;i<jsonArray.length();i++){
+    			JSONObject jsonObj = jsonArray.getJSONObject(i);
+    			String name = (String)jsonObj.get("name");
+    			Log.i("name"+i, name);
+    		}
+    		
+    		
+    	} catch (JSONException e){
+    		e.printStackTrace();
+    	}
+    	
+    	
+    	
+    }
+    
+    
+    
+    
 
     private void showHiScore(){
         HiScore[] hiScore = readHiScore();

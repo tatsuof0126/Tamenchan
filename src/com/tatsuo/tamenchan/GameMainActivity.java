@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tatsuo.tamenchan.domain.TamenchanScore;
+import com.tatsuo.tamenchan.domain.TamenchanSetting;
 import com.tatsuo.tamenchan.domain.Tehai;
 import com.tatsuo.tamenchan.domain.TenpaiChecker;
 import com.tatsuo.tamenchan.view.TimerView;
@@ -51,9 +52,6 @@ public class GameMainActivity extends Activity {
 	
 	private static final String BUTTON_JUDGE = "judge";
 	private static final String BUTTON_MENU  = "menu";
-	
-	private static final String INITPLAY_PREF_NAME = "initplay";
-	private static final String INITPLAY_KEY = "initplay";
 	
 	// インテントのキー
 	static final String KEY_SCORE = "score";
@@ -375,14 +373,12 @@ public class GameMainActivity extends Activity {
     
     private boolean isInitialPlay(){
     	SharedPreferences preferences
-    		= getSharedPreferences(INITPLAY_PREF_NAME, MODE_PRIVATE);
+    		= getSharedPreferences(TamenchanSetting.SETTING_PREF_NAME, MODE_PRIVATE);
     	
-    	boolean initPlay = preferences.getBoolean(INITPLAY_KEY, true);
+    	boolean initPlay = TamenchanSetting.isInitialPlay(preferences);
     	
     	if(initPlay == true){
-    		SharedPreferences.Editor editor = preferences.edit();
-    		editor.putBoolean(INITPLAY_KEY, false);
-    		editor.commit();
+    		TamenchanSetting.setInitialPlay(preferences, false);
     	}
     	
     	return initPlay;

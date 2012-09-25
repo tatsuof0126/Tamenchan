@@ -38,7 +38,8 @@ public class TamenchanMainActivity extends Activity {
     			Intent intent = new Intent(TamenchanMainActivity.this, GameMainActivity.class);
     			startActivity(intent);
     		} else if (HISCORE.equals(v.getTag())){
-    			Intent intent = new Intent(TamenchanMainActivity.this, HiScoreActivity.class);
+//    			Intent intent = new Intent(TamenchanMainActivity.this, HiScoreActivity.class);
+    			Intent intent = new Intent(TamenchanMainActivity.this, HiScoreTabActivity.class);
     			startActivity(intent);
     		} else if (OPTION.equals(v.getTag())){
     			Intent intent = new Intent(TamenchanMainActivity.this, OptionActivity.class);

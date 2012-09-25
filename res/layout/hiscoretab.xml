@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent" >
+	
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    	android:id="@+id/hiscoretab1"
+	    android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+	    android:gravity="top|center_horizontal"
+		android:baselineAligned="true"
+    	android:orientation="vertical" >
+
+	    <TextView
+   		    android:layout_width="fill_parent"
+       		android:layout_height="15dp"
+       		android:text="" />
+
+		<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    	android:layout_width="320dp"
+			android:layout_height="wrap_content" >
+		
+			<TableRow>
+			    <TextView
+			   	    android:layout_width="200dp"
+       				android:layout_height="wrap_content"
+				    android:textStyle="bold"
+			    	android:textSize="18dp"
+	       			android:text="私のハイスコア" />
+	       			
+				<Button
+					android:id="@+id/clearhiscore"
+					android:text="クリア"
+					android:layout_width="120dp"
+					android:layout_height="wrap_content"
+					android:layout_gravity="right" />		
+			</TableRow>
+		
+		</TableLayout>
+    
+	    <TextView
+   		    android:layout_width="fill_parent"
+       		android:layout_height="10dp"
+	       	android:text="" />
+       	
+	    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    	android:id="@+id/hiscorelist"
+    		android:layout_width="320dp"
+    		android:layout_height="wrap_content"
+	    	android:gravity="center_horizontal">
+    	
+	    	<TableRow
+    			android:layout_height="20dp">
+    			
+	    		<TextView
+		   		    android:layout_width="50dp"
+					android:gravity="center"
+    				android:text="順位" />
+    		
+	    		<TextView
+		   		    android:layout_width="180dp"
+					android:gravity="center"
+    				android:text="名前" />
+    		
+	    		<TextView
+		   		    android:layout_width="90dp"
+					android:gravity="center"
+    				android:text="得点" />
+    	
+	    	</TableRow>
+    	
+    	</TableLayout>
+
+	    <TextView
+   		    android:layout_width="fill_parent"
+       		android:layout_height="20dp"
+	       	android:text="" />
+    
+		<Button
+			android:text="みんなのハイスコアに登録"
+			android:id="@+id/postbutton"
+			android:layout_width="150dp"
+			android:layout_height="wrap_content" />
+
+	    <TextView
+   		    android:layout_width="fill_parent"
+       		android:layout_height="20dp"
+	       	android:text="" />
+    
+		<Button
+			android:text="メニューに戻る"
+			android:id="@+id/menubutton"
+			android:layout_width="150dp"
+			android:layout_height="wrap_content" />
+
+	</LinearLayout>
+   		
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    	android:id="@+id/hiscoretab2"
+	    android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+	    android:gravity="top|center_horizontal"
+		android:baselineAligned="true"
+    	android:orientation="vertical" >
+
+	    <TextView
+   		    android:layout_width="fill_parent"
+       		android:layout_height="15dp"
+       		android:text="" />
+
+		<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    		android:layout_width="320dp"
+    		android:layout_height="wrap_content">
+		
+			<TableRow>
+			    <TextView
+			   	    android:layout_width="200dp"
+       				android:layout_height="wrap_content"
+				    android:textStyle="bold"
+			    	android:textSize="18dp"
+	       			android:text="みんなのハイスコア" />
+	       			
+				<Button
+					android:id="@+id/reloadhiscore"
+					android:text="再表示"
+					android:layout_width="120dp"
+					android:layout_height="wrap_content"
+					android:layout_gravity="right" />		
+			</TableRow>
+		
+		</TableLayout>
+		
+	    <TextView
+   		    android:layout_width="fill_parent"
+       		android:layout_height="10dp"
+	       	android:text="" />
+       	
+	    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    		android:layout_width="320dp"
+    		android:layout_height="wrap_content"
+	    	android:gravity="center_horizontal">
+    	
+	    	<TableRow
+    			android:layout_height="20dp">
+    			
+	    		<TextView
+	    			android:id="@+id/headerrank"
+		   		    android:layout_width="50dp"
+					android:gravity="center"
+    				android:text="順位" />
+    		
+	    		<TextView
+	    			android:id="@+id/headername"
+		   		    android:layout_width="180dp"
+					android:gravity="center"
+    				android:text="名前" />
+    		
+	    		<TextView
+	    			android:id="@+id/headerscore"
+		   		    android:layout_width="90dp"
+					android:gravity="center"
+    				android:text="得点" />
+    	
+	    	</TableRow>
+    	
+    	</TableLayout>
+
+		<ScrollView
+	        android:layout_width="320dp"
+    	    android:layout_height="210dp">
+
+		    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		    	android:id="@+id/registeredhiscorelist"
+    			android:layout_width="320dp"
+    			android:layout_height="210dp"
+	    		android:gravity="center_horizontal">
+	    	    	
+	    	</TableLayout>
+    	
+    	</ScrollView>
+
+	    <TextView
+   		    android:layout_width="fill_parent"
+       		android:layout_height="15dp"
+	       	android:text="" />
+    
+		<Button
+			android:text="メニューに戻る"
+			android:id="@+id/menubutton2"
+			android:layout_width="150dp"
+			android:layout_height="wrap_content" />
+    
+	</LinearLayout>
+
+</FrameLayout>
