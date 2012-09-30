@@ -5,12 +5,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tatsuo.tamenchan.domain.TamenchanSetting;
@@ -18,10 +16,10 @@ import com.tatsuo.tamenchan.domain.TwitterUser;
 
 public class OptionActivity extends Activity {
 	
-	private static final String BUTTON_CONNECT_TWITTER = "connecttwitter";
+	private static final String BUTTON_CONNECT_TWITTER    = "connecttwitter";
 	private static final String BUTTON_DISCONNECT_TWITTER = "disconnecttwitter";
-	private static final String BUTTON_ABOUTAPP        = "aboutapp";
-	private static final String BUTTON_MENU            = "menu";
+	private static final String BUTTON_ABOUTAPP           = "aboutapp";
+	private static final String BUTTON_MENU               = "menu";
 	
 	private static final int TWITTER_AUTHENTICATION = 1;
 	
@@ -66,11 +64,6 @@ public class OptionActivity extends Activity {
             imageView.setVisibility(View.GONE);
             textView.setVisibility(View.GONE);
             twitterDisconnectButton.setVisibility(View.GONE);
-                      
-//        	LinearLayout linearLayout = (LinearLayout)findViewById(R.id.twitterprofile);
-//        	linearLayout.setVisibility(View.INVISIBLE);
-//        	LinearLayout parent = (LinearLayout)linearLayout.getParent();
-//        	parent.removeView(linearLayout);
         }
         
     }
@@ -108,12 +101,14 @@ public class OptionActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode,
     		int resultCode, Intent intent) {
+    	// 戻りの情報でTwitter情報を構築＆保存
     	TwitterUser twitterUser = TwitterUser.makeTwitterUser(this, requestToken, intent);
     	
     	if(twitterUser == null){
     		return;
     	}
     	
+    	// Twitter情報が取得できた場合は画面に表示
         Button twitterButton = (Button)findViewById(R.id.connecttwitter);
         Button twitterDisconnectButton = (Button)findViewById(R.id.disconnecttwitter);
         ImageView imageView = (ImageView)findViewById(R.id.twittericon);
@@ -125,7 +120,6 @@ public class OptionActivity extends Activity {
         String twitterScreenName = TamenchanSetting.getTwitterScreenName(this);
         textView.setText("  "+twitterScreenName+"    ");
         
-    	// Twitter情報を表示
         twitterButton.setVisibility(View.GONE);
         twitterDisconnectButton.setVisibility(View.VISIBLE);
         imageView.setVisibility(View.VISIBLE);

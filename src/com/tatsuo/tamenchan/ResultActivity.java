@@ -34,12 +34,6 @@ public class ResultActivity extends Activity {
 	
 	private HiScore[] hiScore = null;
 	private int myRank = RANKING_OUTSIDE;
-
-/*	
-    private OAuthAuthorization twitterOauth;
-    private RequestToken requestToken;	
-    private AccessToken accessToken;
-*/
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -135,68 +129,10 @@ public class ResultActivity extends Activity {
         		intent.putExtra(KEY_MODE, MODE_TWEET);
         		startActivity(intent);
         		finish();
-/* 
- 	         	ConfigurationBuilder builder = new ConfigurationBuilder();
-
-    	        builder.setOAuthConsumerKey(TamenchanDefine.CONSUMER_KEY);
-    	        builder.setOAuthConsumerSecret(TamenchanDefine.CONSUMER_SECRET);
-    	        
-    	        Configuration configuration = builder.build();
-    	 
-    	        twitterOauth = new OAuthAuthorization(configuration);
-    	        twitterOauth.setOAuthAccessToken(null);
-    	        
-    	        try {
-    	        	requestToken = twitterOauth.getOAuthRequestToken(TamenchanDefine.CALLBACK_URL);
-    	        } catch (TwitterException e) {
-    	        	e.printStackTrace();
-    	        }
-    	 
-    	        Intent intent = new Intent(ResultActivity.this, TwitterLoginActivity.class);
-    	        intent.putExtra("auth_url", requestToken.getAuthorizationURL());    	 
-    	        startActivityForResult(intent, 1);
-*/
     		}
     	}
     }
-   
-/*    
-    @Override
-    protected void onActivityResult(int requestCode,
-    		int resultCode, Intent intent) {
-    	try{
-    		accessToken = twitterOauth.getOAuthAccessToken(
-    				requestToken, intent.getExtras().getString(TamenchanDefine.PARAM_OAUTH_VERIFIER));
-    	} catch (TwitterException te){
-    		te.printStackTrace();
-    	}
-    	
-    	Log.i(TamenchanDefine.SUB_KEY_OAUTH_TOKEN, accessToken.getToken());
-    	Log.i(TamenchanDefine.SUB_KEY_OAUTH_TOKEN_SECRET, accessToken.getTokenSecret());
-    	
-    	String oauthToken       = accessToken.getToken();
-    	String oauthTokenSecret = accessToken.getTokenSecret();
-    	
-    	ConfigurationBuilder builder = new ConfigurationBuilder();
-    	builder.setOAuthConsumerKey(TamenchanDefine.CONSUMER_KEY);
-    	builder.setOAuthConsumerSecret(TamenchanDefine.CONSUMER_SECRET);
-    	builder.setOAuthAccessToken(oauthToken);
-    	builder.setOAuthAccessTokenSecret(oauthTokenSecret);
-
-    	Configuration config = builder.build();
-    	
-    	Twitter twitter = new TwitterFactory(config).getInstance();
-
-    	try {
-    		twitter.updateStatus("Tweet from Tamenchan App");
-    	} catch (TwitterException te){
-    		te.printStackTrace();
-    	}
-
-    	
-    	finish();
-    }
-*/    
+    
     private int checkHiScore(HiScore[] hiScore, TamenchanScore score){
     	int rank = RANKING_OUTSIDE;
     	

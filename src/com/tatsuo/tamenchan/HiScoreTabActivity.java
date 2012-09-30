@@ -19,14 +19,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.auth.AccessToken;
-import twitter4j.auth.OAuthAuthorization;
 import twitter4j.auth.RequestToken;
-import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationBuilder;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
@@ -228,7 +222,6 @@ public class HiScoreTabActivity extends TabActivity {
 			RegisteredHiScore[] registeredHiScore = null;
 			
 	    	HttpClient client = new DefaultHttpClient();
-//			HttpUriRequest request = new HttpGet("http://192.168.11.4:3000/hiscorelist");
 	    	HttpUriRequest request = new HttpGet(TamenchanDefine.SERVER_URI + TamenchanDefine.HISCORELIST_PATH);
 	    	HttpResponse response = null;
 	    	HttpEntity entity = null;
@@ -284,7 +277,6 @@ public class HiScoreTabActivity extends TabActivity {
 			RegisteredHiScore[] registeredHiScore = null;
 
 	    	HttpClient client = new DefaultHttpClient();
-//	    	HttpPost request = new HttpPost("http://192.168.11.4:3000/hiscorelist");
 	    	HttpPost request = new HttpPost(TamenchanDefine.SERVER_URI + TamenchanDefine.HISCORELIST_PATH);
 	    	HttpResponse response = null;
 	    	HttpEntity entity = null;
@@ -348,7 +340,6 @@ public class HiScoreTabActivity extends TabActivity {
 	    		
 	    		AlertDialog.Builder resultDialog
 	    			= new AlertDialog.Builder(HiScoreTabActivity.this);
-//	    		resultDialog.setTitle("");
 	    		String messageText = "";
 	    		if(rankingNum != 0){
 	    			messageText = "登録されました。\nみんなのハイスコアに "
@@ -381,8 +372,6 @@ public class HiScoreTabActivity extends TabActivity {
 		    	});
 	    		resultDialog.show();	    	
 	    	}
-	    	
-			// getTabHost().setCurrentTabByTag(TAB2);
 	    }
     }
     
@@ -393,11 +382,22 @@ public class HiScoreTabActivity extends TabActivity {
 			// Twitter認証があるとき
 			String tweetString = makeTweetString(TWEET_REGISTERED_HISCORE);
 			showTweetDialog(twitterUser, tweetString);
-//			tweet(oauthToken, oauthTokenSecret, tweet);
-//			authentication(TWEET_REGISTERED_HISCORE);
 		} else {
 			// Twitter認証情報がないとき
 			authentication(TWEET_REGISTERED_HISCORE);
+		}
+    }
+    
+    private void tweetLocalHiScore(){
+    	TwitterUser twitterUser = TwitterUser.getTwitterUser(this);
+    	    	
+		if(twitterUser != null){
+			// Twitter認証があるとき
+			String tweetString = makeTweetString(TWEET_LOCAL_HISCORE);
+			showTweetDialog(twitterUser, tweetString);
+		} else {
+			// Twitter認証情報がないとき
+			authentication(TWEET_LOCAL_HISCORE);
 		}
     }
     
@@ -423,94 +423,6 @@ public class HiScoreTabActivity extends TabActivity {
 		dialog.show();
     }
     
-    private void tweetLocalHiScore(){
-    	TwitterUser twitterUser = TwitterUser.getTwitterUser(this);
-    	
-//    	String oauthToken       = TamenchanSetting.getOauthToken(HiScoreTabActivity.this);
-//    	String oauthTokenSecret = TamenchanSetting.getOauthTokenSecret(HiScoreTabActivity.this);
-    	
-		if(twitterUser != null){
-			// Twitter認証があるとき
-			String tweetString = makeTweetString(TWEET_LOCAL_HISCORE);
-			showTweetDialog(twitterUser, tweetString);
-//			tweet(oauthToken, oauthTokenSecret, tweet);
-//			authentication(TWEET_LOCAL_HISCORE);
-		} else {
-			// Twitter認証情報がないとき
-			authentication(TWEET_LOCAL_HISCORE);
-		}
-    }
-    
-    @Override
-    protected void onActivityResult(int requestCode,
-    		int resultCode, Intent intent) {
-    	TwitterUser twitterUser = TwitterUser.makeTwitterUser(this, requestToken, intent);
-    	
-    	if(twitterUser == null){
-    		return;
-    	}
-/*    	
-    	if(intent == null){
-    		return;
-    	}
-    	
-		String oauth_verifier = intent.getStringExtra(TamenchanDefine.PARAM_OAUTH_VERIFIER);
-		if(oauth_verifier == null || "".equals(oauth_verifier)){
-			return;
-		}
-    	
-    	try{
-    		accessToken = twitterOauth.getOAuthAccessToken(requestToken, oauth_verifier);
-    	} catch (TwitterException te){
-    		te.printStackTrace();
-    	}
-    	
-    	String oauthToken       = accessToken.getToken();
-    	String oauthTokenSecret = accessToken.getTokenSecret();
-    	
-    	TamenchanSetting.setOauthToken(this, oauthToken);
-    	TamenchanSetting.setOauthTokenSecret(this, oauthTokenSecret);    	
-    	
-*/    	
-    	String tweetString = makeTweetString(requestCode);
-    	showTweetDialog(twitterUser, tweetString);
-    	
-//    	tweet(oauthToken, oauthTokenSecret, tweet);
-    }
-    
-/*
-    private void tweet(String oauthToken, String oauthTokenSecret, String tweet){
-    	ConfigurationBuilder builder = new ConfigurationBuilder();
-    	builder.setOAuthConsumerKey(TamenchanDefine.CONSUMER_KEY);
-    	builder.setOAuthConsumerSecret(TamenchanDefine.CONSUMER_SECRET);
-    	builder.setOAuthAccessToken(oauthToken);
-    	builder.setOAuthAccessTokenSecret(oauthTokenSecret);
-
-    	Configuration config = builder.build();
-    	
-    	final Twitter twitter = new TwitterFactory(config).getInstance();
-		final EditText tweetText = new EditText(this);
-		tweetText.setText(tweet);
-		
-		AlertDialog.Builder dialog
-			= new AlertDialog.Builder(HiScoreTabActivity.this);
-		dialog.setTitle("Twitterにつぶやく");
-		dialog.setView(tweetText);
-		dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-		    	try {
-		    		twitter.updateStatus(tweetText.getText().toString());
-		    		Toast.makeText(HiScoreTabActivity.this, "つぶやきました", Toast.LENGTH_LONG).show();
-		    	} catch (TwitterException te){
-		    		te.printStackTrace();
-		    	}
-			}
-		});
-		dialog.show();
-    }
-*/
-    
     private void authentication(int tweetmode){
     	requestToken = TwitterUser.getRequestToken();
  
@@ -519,28 +431,18 @@ public class HiScoreTabActivity extends TabActivity {
         startActivityForResult(intent, tweetmode);
     }
 
-/*    
-    private void authentication2(int tweetmode){
-        ConfigurationBuilder builder = new ConfigurationBuilder();
-        builder.setOAuthConsumerKey(TamenchanDefine.CONSUMER_KEY);
-        builder.setOAuthConsumerSecret(TamenchanDefine.CONSUMER_SECRET);
-        
-        Configuration configuration = builder.build();
- 
-        twitterOauth = new OAuthAuthorization(configuration);
-        twitterOauth.setOAuthAccessToken(null);
-        
-        try {
-        	requestToken = twitterOauth.getOAuthRequestToken(TamenchanDefine.CALLBACK_URL);
-        } catch (TwitterException e) {
-        	e.printStackTrace();
-        }
- 
-        Intent intent = new Intent(this, TwitterLoginActivity.class);
-        intent.putExtra(TwitterLoginActivity.KEY_AUTH_URL, requestToken.getAuthorizationURL());    	 
-        startActivityForResult(intent, tweetmode);
+    @Override
+    protected void onActivityResult(int requestCode,
+    		int resultCode, Intent intent) {
+    	TwitterUser twitterUser = TwitterUser.makeTwitterUser(this, requestToken, intent);
+    	
+    	if(twitterUser == null){
+    		return;
+    	}
+    	
+    	String tweetString = makeTweetString(requestCode);
+    	showTweetDialog(twitterUser, tweetString);
     }
-*/
     
     private String makeTweetString(int tweetmode){
     	HiScore[] hiScore = HiScore.readHiScore(this);

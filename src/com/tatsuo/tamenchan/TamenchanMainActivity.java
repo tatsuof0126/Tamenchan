@@ -10,9 +10,9 @@ import android.widget.Button;
 public class TamenchanMainActivity extends Activity {
     /** Called when the activity is first created. */
 	
-	private static final String GAMESTART = "gamestart";
-	private static final String HISCORE   = "hiscore";
-	private static final String OPTION    = "option";
+	private static final String BUTTON_GAMESTART = "gamestart";
+	private static final String BUTTON_HISCORE   = "hiscore";
+	private static final String BUTTON_OPTION    = "option";
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -20,28 +20,27 @@ public class TamenchanMainActivity extends Activity {
         setContentView(R.layout.main);
         
         Button startButton = (Button)findViewById(R.id.gamestartbutton);
-        startButton.setTag(GAMESTART);
+        startButton.setTag(BUTTON_GAMESTART);
         startButton.setOnClickListener(new ButtonClickListener());
         
         Button hiscoreButton = (Button)findViewById(R.id.hiscorebutton);
-        hiscoreButton.setTag(HISCORE);
+        hiscoreButton.setTag(BUTTON_HISCORE);
         hiscoreButton.setOnClickListener(new ButtonClickListener());
         
         Button optionButton = (Button)findViewById(R.id.optionbutton);
-        optionButton.setTag(OPTION);
+        optionButton.setTag(BUTTON_OPTION);
         optionButton.setOnClickListener(new ButtonClickListener());
     }
     
     class ButtonClickListener implements OnClickListener {
     	public void onClick(View v){
-    		if(GAMESTART.equals(v.getTag())){
+    		if(BUTTON_GAMESTART.equals(v.getTag())){
     			Intent intent = new Intent(TamenchanMainActivity.this, GameMainActivity.class);
     			startActivity(intent);
-    		} else if (HISCORE.equals(v.getTag())){
-//    			Intent intent = new Intent(TamenchanMainActivity.this, HiScoreActivity.class);
+    		} else if (BUTTON_HISCORE.equals(v.getTag())){
     			Intent intent = new Intent(TamenchanMainActivity.this, HiScoreTabActivity.class);
     			startActivity(intent);
-    		} else if (OPTION.equals(v.getTag())){
+    		} else if (BUTTON_OPTION.equals(v.getTag())){
     			Intent intent = new Intent(TamenchanMainActivity.this, OptionActivity.class);
     			startActivity(intent);
     		}

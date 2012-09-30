@@ -65,7 +65,6 @@ public class TwitterUser {
     	return twitter;
 	}
 	
-	
 	public static TwitterUser getTwitterUser(Activity activity){
 		TwitterUser twitterUser = null;
 		
@@ -125,7 +124,7 @@ public class TwitterUser {
 		return twitterUser;
 	}
 	
-	public void saveTwitterInfo(Activity activity){
+	private void saveTwitterInfo(Activity activity){
     	TamenchanSetting.setOauthToken(activity, oauthToken);
     	TamenchanSetting.setOauthTokenSecret(activity, oauthTokenSecret);
     	
