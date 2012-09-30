@@ -18,6 +18,40 @@
        		android:text="" />
 
 		<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		    android:id="@+id/resultmessagelayout"
+	    	android:layout_width="320dp"
+			android:layout_height="wrap_content" >
+		
+			<TableRow>
+
+			    <TextView 
+		    		android:id="@+id/resultscore"
+	   		    	android:layout_width="160dp"
+    	   			android:layout_height="wrap_content"
+		    		android:textSize="18dp"
+    	   			android:gravity="center_vertical"
+       				android:text="" />
+
+				<Button
+					android:id="@+id/continuegame"
+					android:text="ゲームを続ける"
+					android:layout_width="160dp"
+					android:layout_height="wrap_content"
+					android:layout_gravity="right" />		
+
+			</TableRow>
+		
+			<TableRow>
+			    <TextView
+	    			android:id="@+id/resultscoremargin"
+	   			    android:layout_width="fill_parent"
+    	   			android:layout_height="20dp"
+	       			android:text="" />
+			</TableRow>
+
+		</TableLayout>
+           	
+		<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	    	android:layout_width="320dp"
 			android:layout_height="wrap_content" >
 		

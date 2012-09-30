@@ -16,32 +16,61 @@
        	android:layout_height="wrap_content"
 	    android:textStyle="bold"
 	    android:textSize="18dp"
-       	android:text="アプリについて" />
+       	android:text="アプリ設定" />
+
+    <TextView
+   	    android:layout_width="fill_parent"
+       	android:layout_height="25dp"
+       	android:text="" />
     
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    	android:id="@+id/twitterprofile"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:gravity="center_horizontal"
+	    android:orientation="horizontal" >
+    
+		<ImageView
+			android:id="@+id/twittericon"
+			android:scaleType="fitXY"
+			android:layout_width="40dp"
+			android:layout_height="40dp" />
+		
+	    <TextView
+			android:id="@+id/twittername"
+   	    	android:layout_width="wrap_content"
+       		android:layout_height="wrap_content"
+       		android:textSize="18sp"
+	       	android:text="" />
+	    
+		<Button
+			android:text="連携解除"
+			android:id="@+id/disconnecttwitter"
+			android:layout_width="80dp"
+			android:layout_height="wrap_content" />
+
+		<Button
+			android:text="Twitter連携"
+			android:id="@+id/connecttwitter"
+			android:layout_width="150dp"
+			android:layout_height="wrap_content" />
+	
+	</LinearLayout>
+
     <TextView
    	    android:layout_width="fill_parent"
-       	android:layout_height="15dp"
+       	android:layout_height="25dp"
        	android:text="" />
+    
+	<Button
+		android:text="アプリについて"
+		android:id="@+id/aboutapp"
+		android:layout_width="150dp"
+		android:layout_height="wrap_content" />
 
     <TextView
    	    android:layout_width="fill_parent"
-       	android:layout_height="wrap_content"
-       	android:text="@string/app_info" />
-
-    <TextView
-   	    android:layout_width="fill_parent"
-       	android:layout_height="15dp"
-       	android:text="" />
-
-    <TextView
-    	android:id="@+id/version"
-   	    android:layout_width="fill_parent"
-       	android:layout_height="wrap_content"
-       	android:text="" />
-
-    <TextView
-   	    android:layout_width="fill_parent"
-       	android:layout_height="20dp"
+       	android:layout_height="45dp"
        	android:text="" />
     
 	<Button

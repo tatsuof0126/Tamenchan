@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 
 public class HiScore {
@@ -12,7 +13,7 @@ public class HiScore {
 	private long date;
 	private int registeredId;
 	
-	public static final String HISCORE_PREF_NAME = "HiScore";
+	private static final String HISCORE_PREF_NAME = "HiScore";
 	
 	private static final String KEY_NAME  = "name";
 	private static final String KEY_SCORE = "score";
@@ -72,8 +73,10 @@ public class HiScore {
 		
 		return dateStr;
 	}
-
-	public static HiScore[] readHiScore(SharedPreferences preferences){
+	
+	public static HiScore[] readHiScore(Activity activity){
+		SharedPreferences preferences =	activity.getSharedPreferences(HISCORE_PREF_NAME, Activity.MODE_PRIVATE);
+		
 		HiScore[] hiScore = new HiScore[HISCORE_LENGTH];
 		
 		for(int i=0;i<HISCORE_LENGTH;i++){
@@ -92,7 +95,8 @@ public class HiScore {
 		return hiScore;
 	}
 	
-	public static void writeHiScore(SharedPreferences preferences, HiScore[] hiScore){
+	public static void writeHiScore(Activity activity, HiScore[] hiScore){
+		SharedPreferences preferences =	activity.getSharedPreferences(HISCORE_PREF_NAME, Activity.MODE_PRIVATE);
 		SharedPreferences.Editor editor = preferences.edit();
 		
 		for(int i=0;i<hiScore.length;i++){
@@ -105,7 +109,7 @@ public class HiScore {
 		editor.commit();
 	}
 
-	public static void clearHiScore(SharedPreferences preferences){
+	public static void clearHiScore(Activity activity){
 		HiScore[] hiScore = new HiScore[HISCORE_LENGTH];
 		
 		for(int i=0;i<hiScore.length;i++){
@@ -116,7 +120,7 @@ public class HiScore {
 			hiScore[i].setRegisteredId(DEFAULT_REGISTERED_ID);
 		}
 		
-		writeHiScore(preferences, hiScore);
+		writeHiScore(activity, hiScore);
 	}
 	
 }

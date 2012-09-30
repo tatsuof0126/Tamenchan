@@ -19,7 +19,6 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -67,7 +66,7 @@ public class HiScoreActivity extends Activity {
     			dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-		    			clearHiScore();
+		    			HiScore.clearHiScore(HiScoreActivity.this);
 		    	        showHiScore();
 					}
 				});
@@ -142,13 +141,9 @@ public class HiScoreActivity extends Activity {
     	
     	
     }
-    
-    
-    
-    
 
     private void showHiScore(){
-        HiScore[] hiScore = readHiScore();
+        HiScore[] hiScore = HiScore.readHiScore(this);
 
         TableLayout tableLayout = (TableLayout)findViewById(R.id.hiscorelist);
 
@@ -178,20 +173,6 @@ public class HiScoreActivity extends Activity {
         	
         	tableLayout.addView(tableRow);
         }
-    }
-    
-    private HiScore[] readHiScore(){
-    	SharedPreferences preferences
-    		= getSharedPreferences(HiScore.HISCORE_PREF_NAME, MODE_PRIVATE);
-    	
-    	return HiScore.readHiScore(preferences);
-    }
-    
-    private void clearHiScore(){
-    	SharedPreferences preferences
-			= getSharedPreferences(HiScore.HISCORE_PREF_NAME, MODE_PRIVATE);
-	
-    	HiScore.clearHiScore(preferences);
     }
     
 }

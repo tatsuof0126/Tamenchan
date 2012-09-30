@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -42,6 +41,8 @@ public class GameMainActivity extends Activity {
 	private static int[] MACHI_ARRAY = new int[100];
 	// レア待ちと見なす待ち数
 	private static final int RARE_MACHI = 7; 
+	
+	private static int[] BONUS_SCORE = new int[10];
 	
 	private static final int[] haiImageResourceId = new int[10];
 	private static final int[] haiImageId = new int[10];
@@ -125,10 +126,20 @@ public class GameMainActivity extends Activity {
     			String messageStr = "";
     			if(result == true){
     				int score = (int)((remainingTime+1000-1) / 1000);
-    				tamenchanScore.setScore(tamenchanScore.getScore()+score);
+    				
+    				int machiNum = 0;
+    				for(int i=0;i<machi.length;i++){
+    					if(machi[i] == true){machiNum++;}
+    				}
+    				int bonus = BONUS_SCORE[machiNum];
+    				
+    				tamenchanScore.setScore(tamenchanScore.getScore()+score+bonus);
     				
     				titleStr = "ためんちゃん！";
-       				messageStr = "正解です   "+score+"点獲得";
+       				messageStr = "正解です！  "+score+"点獲得";
+       				if(bonus != 0){
+       					messageStr += "\nためんちゃんボーナス！ +"+bonus+"点";
+       				}       				
     			} else {
     				titleStr = "だめじゃん．．．";
        				messageStr = "正しくは 「"+makeMachiStr(machi)+"」です\n"
@@ -193,8 +204,10 @@ public class GameMainActivity extends Activity {
     
     private void nextQuestion(){
     	if(tamenchanScore.getQuestion() < MAX_QUESTION){
+    		// まだ問題が残っている場合は次の問題へ
     		makeQuestion();
     	} else {
+    		// 問題が終了したら次の画面に遷移する
     		Intent intent = new Intent(this, ResultActivity.class);
     		intent.putExtra(KEY_SCORE, tamenchanScore);
     		startActivity(intent);
@@ -324,7 +337,7 @@ public class GameMainActivity extends Activity {
 		AlertDialog.Builder dialog
 			= new AlertDialog.Builder(GameMainActivity.this);
 
-		dialog.setTitle("ためんちゃんβの遊び方");
+		dialog.setTitle("ためんちゃんの遊び方");
 		dialog.setMessage("上に表示される手牌の待ち牌を選択して「判定」ボタンを押してください。");
 		dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			@Override
@@ -372,13 +385,10 @@ public class GameMainActivity extends Activity {
     }
     
     private boolean isInitialPlay(){
-    	SharedPreferences preferences
-    		= getSharedPreferences(TamenchanSetting.SETTING_PREF_NAME, MODE_PRIVATE);
-    	
-    	boolean initPlay = TamenchanSetting.isInitialPlay(preferences);
+    	boolean initPlay = TamenchanSetting.isInitialPlay(this);
     	
     	if(initPlay == true){
-    		TamenchanSetting.setInitialPlay(preferences, false);
+    		TamenchanSetting.setInitialPlay(this, false);
     	}
     	
     	return initPlay;
@@ -397,6 +407,8 @@ public class GameMainActivity extends Activity {
 				3,3,3,3,3,4,4,4,4,4,
 				4,4,4,4,4,4,4,4,4,4,
 				5,5,5,5,5,5,5,6,6,6};
+		
+		BONUS_SCORE = new int[]{0,0,0,3,5,7,10,10,15,20};
 		
 		tehaiImageId[0] = 0;
 		tehaiImageId[1] = R.id.tehai1;

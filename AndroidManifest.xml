@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tatsuo.tamenchan"
     android:versionCode="4"
-    android:versionName="0.30" >
+    android:versionName="0.90" >
 
     <uses-sdk android:minSdkVersion="8" />
 
@@ -15,20 +15,25 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         
         <activity android:name="com.tatsuo.tamenchan.GameMainActivity"
         	android:screenOrientation="portrait"></activity>
-        <activity android:name="com.tatsuo.tamenchan.HiScoreActivity"
+        <activity android:name="com.tatsuo.tamenchan.ResultActivity"
         	android:screenOrientation="portrait"></activity>
+<!--    
+		<activity android:name="com.tatsuo.tamenchan.HiScoreActivity"
+        	android:screenOrientation="portrait"></activity>
+-->        	
         <activity android:name="com.tatsuo.tamenchan.HiScoreTabActivity"
         	android:screenOrientation="portrait"></activity>
         <activity android:name="com.tatsuo.tamenchan.OptionActivity"
         	android:screenOrientation="portrait"></activity>
-        <activity android:name="com.tatsuo.tamenchan.ResultActivity"
+        <activity android:name="com.tatsuo.tamenchan.AboutAppActivity"
+        	android:screenOrientation="portrait"></activity>
+        <activity android:name="com.tatsuo.tamenchan.TwitterLoginActivity"
         	android:screenOrientation="portrait"></activity>
         
     </application>
