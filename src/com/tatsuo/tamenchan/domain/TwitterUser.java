@@ -17,8 +17,8 @@ import twitter4j.conf.ConfigurationBuilder;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 
 
 public class TwitterUser {

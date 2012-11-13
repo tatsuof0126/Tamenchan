@@ -141,7 +141,7 @@ public class ResultActivity extends Activity {
     		if(hiScore[num].getScore() <= score.getScore()){
     			// デフォルトの名前を一番最近入力したハイスコアにする
     			String defaultName = "";
-    			long latestDate = -1L;
+    			long latestDate = HiScore.DEFAULT_DATE;
     			for(int i=0;i<hiScore.length;i++){
     				if(hiScore[i].getDate() > latestDate){
     					defaultName = hiScore[i].getName();
