@@ -3,8 +3,11 @@ package com.tatsuo.tamenchan;
 import java.util.Date;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,7 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tatsuo.tamenchan.domain.HiScore;
+import com.tatsuo.tamenchan.domain.TamenchanDefine;
 import com.tatsuo.tamenchan.domain.TamenchanScore;
+import com.tatsuo.tamenchan.domain.TamenchanSetting;
 
 public class ResultActivity extends Activity {
 	
@@ -41,6 +46,14 @@ public class ResultActivity extends Activity {
         setContentView(R.layout.result);
         
         TamenchanScore tamenchanScore = (TamenchanScore)getIntent().getSerializableExtra(GameMainActivity.KEY_SCORE);
+        
+        boolean highLevelOpen = false;
+        if(tamenchanScore.getScore() >= TamenchanDefine.QUALIFYING_SCORE && 
+        		TamenchanSetting.getGameLevel(this) == TamenchanDefine.GAMELEVEL_MIDDLE &&
+        		TamenchanSetting.getHighLevelFlag(this) == false){
+        	TamenchanSetting.setHighLevelFlag(this, true);
+        	highLevelOpen = true;
+        }
         
         hiScore = HiScore.readHiScore(this);
         myRank = checkHiScore(hiScore, tamenchanScore);
@@ -72,6 +85,7 @@ public class ResultActivity extends Activity {
         	if(i == myRank){
         		nameView = new EditText(this);
         		nameView.setId(MY_NAME_EDITTEXT);
+        		nameView.setInputType(InputType.TYPE_CLASS_TEXT);
         	} else {
         		nameView = new TextView(this);
         	}
@@ -95,6 +109,11 @@ public class ResultActivity extends Activity {
         Button saveButton = (Button)findViewById(R.id.save);
         saveButton.setTag(BUTTON_SAVE);
         saveButton.setOnClickListener(new ButtonClickListener());
+        
+        if(highLevelOpen == true){
+        	showHighLevelOpenDialog();
+        }
+        
     }
     
     class ButtonClickListener implements OnClickListener {
@@ -133,6 +152,17 @@ public class ResultActivity extends Activity {
     	}
     }
     
+    private void showHighLevelOpenDialog(){
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+		dialog.setTitle("おめでとうございます");
+		dialog.setMessage("中級で"+TamenchanDefine.QUALIFYING_SCORE+"点以上獲得したため、上級が選択できるようになりました。\nぜひチャレンジしてください。");
+		dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+		dialog.show();
+    }
+    
     private int checkHiScore(HiScore[] hiScore, TamenchanScore score){
     	int rank = RANKING_OUTSIDE;
     	
@@ -140,14 +170,7 @@ public class ResultActivity extends Activity {
     	while(num < hiScore.length){
     		if(hiScore[num].getScore() <= score.getScore()){
     			// デフォルトの名前を一番最近入力したハイスコアにする
-    			String defaultName = "";
-    			long latestDate = HiScore.DEFAULT_DATE;
-    			for(int i=0;i<hiScore.length;i++){
-    				if(hiScore[i].getDate() > latestDate){
-    					defaultName = hiScore[i].getName();
-    					latestDate = hiScore[i].getDate();
-    				}
-    			}
+    			String defaultName = getDefaultName();
     			
     			// 今までのランキングを１つずつ落とす
     			for(int i=hiScore.length-1;i>=num+1;i--){
@@ -162,5 +185,23 @@ public class ResultActivity extends Activity {
     	
     	return rank;
     }
+    
+    private String getDefaultName(){
+		String defaultName = "";
+		long latestDate = HiScore.DEFAULT_DATE;
+		
+		HiScore[] allHiScore = HiScore.readAllHiScore(this);
+		
+		// デフォルトの名前を一番最近入力したハイスコアにする
+		for(int i=0;i<allHiScore.length;i++){
+			if(allHiScore[i].getDate() > latestDate){
+				defaultName = allHiScore[i].getName();
+				latestDate = allHiScore[i].getDate();
+			}
+		}
+    	
+    	return defaultName;
+    }
+    
 
 }

@@ -11,6 +11,10 @@ public class TamenchanSetting {
 	
 	private static final String KEY_INITPLAY  = "initplay";
 	private static final String KEY_DEVICE_ID = "deviceId";
+	
+	private static final String KEY_GAMELEVEL = "gamelevel";
+	private static final String KEY_HIGHLEVELFLAG = "highlevelflag";
+	private static final String KEY_HAITYPE   = "haitype";
 
 	private static final String KEY_OAUTH_TOKEN         = "oauthToken";
 	private static final String KEY_OAUTH_TOKEN_SECRET  = "oauthTokenSecret";
@@ -46,6 +50,42 @@ public class TamenchanSetting {
 		SharedPreferences preferences =	activity.getSharedPreferences(SETTING_PREF_NAME, Activity.MODE_PRIVATE);
 		SharedPreferences.Editor editor = preferences.edit();
 		editor.putBoolean(KEY_INITPLAY, initialPlay);
+		editor.commit();		
+	}
+	
+	public static int getGameLevel(Activity activity){
+		SharedPreferences preferences =	activity.getSharedPreferences(SETTING_PREF_NAME, Activity.MODE_PRIVATE);
+    	return preferences.getInt(KEY_GAMELEVEL, TamenchanDefine.GAMELEVEL_MIDDLE);
+	}
+	
+	public static void setGameLevel(Activity activity, int gameLevel){
+		SharedPreferences preferences =	activity.getSharedPreferences(SETTING_PREF_NAME, Activity.MODE_PRIVATE);
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putInt(KEY_GAMELEVEL, gameLevel);
+		editor.commit();		
+	}
+	
+	public static int getHaiType(Activity activity){
+		SharedPreferences preferences =	activity.getSharedPreferences(SETTING_PREF_NAME, Activity.MODE_PRIVATE);
+    	return preferences.getInt(KEY_HAITYPE, 0);
+	}
+	
+	public static void setHaiType(Activity activity, int haiType){
+		SharedPreferences preferences =	activity.getSharedPreferences(SETTING_PREF_NAME, Activity.MODE_PRIVATE);
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putInt(KEY_HAITYPE, haiType);
+		editor.commit();
+	}
+	
+	public static boolean getHighLevelFlag(Activity activity){
+		SharedPreferences preferences =	activity.getSharedPreferences(SETTING_PREF_NAME, Activity.MODE_PRIVATE);
+    	return preferences.getBoolean(KEY_HIGHLEVELFLAG, false);
+	}
+
+	public static void setHighLevelFlag(Activity activity, boolean highLevelFlag){
+		SharedPreferences preferences =	activity.getSharedPreferences(SETTING_PREF_NAME, Activity.MODE_PRIVATE);
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putBoolean(KEY_HIGHLEVELFLAG, highLevelFlag);
 		editor.commit();		
 	}
 	

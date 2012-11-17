@@ -15,16 +15,17 @@ public class HiScore {
 	
 	private static final String HISCORE_PREF_NAME = "HiScore";
 	
-	private static final String KEY_NAME  = "name";
-	private static final String KEY_SCORE = "score";
-	private static final String KEY_DATE  = "date";
-	private static final String KEY_REGISTERED_ID  = "registeredId";
+	private static final String[] KEY_NAME  = {"name0","name","name2"};
+	private static final String[] KEY_SCORE = {"score0","score","score2"};
+	private static final String[] KEY_DATE  = {"date0","date","date2"};
+	private static final String[] KEY_REGISTERED_ID  = {"registeredId0","registeredId","registeredId2"};
 	
 	private static final int HISCORE_LENGTH = 5;
 	
-	public static final String DEFAULT_NAME = "No Name";
-	public static final long   DEFAULT_DATE = 0L;
-	public static final int    DEFAULT_REGISTERED_ID = -999;
+	public static final String  DEFAULT_NAME = "No Name";
+	public static final long    DEFAULT_DATE = 0L;
+	public static final int[][] DEFAULT_SCORE = {{25,20,15,10,5},{25,20,15,10,5},{10,8,6,4,2}};
+	public static final int     DEFAULT_REGISTERED_ID = -999;
 	
 	public HiScore(){
 		this.registeredId = DEFAULT_REGISTERED_ID;
@@ -75,15 +76,20 @@ public class HiScore {
 	}
 	
 	public static HiScore[] readHiScore(Activity activity){
+		int gamelevel = TamenchanSetting.getGameLevel(activity);		
+		return readHiScore(activity, gamelevel);
+	}
+	
+	public static HiScore[] readHiScore(Activity activity, int gamelevel){
 		SharedPreferences preferences =	activity.getSharedPreferences(HISCORE_PREF_NAME, Activity.MODE_PRIVATE);
 		
 		HiScore[] hiScore = new HiScore[HISCORE_LENGTH];
 		
 		for(int i=0;i<HISCORE_LENGTH;i++){
-			String name = preferences.getString(KEY_NAME+i, DEFAULT_NAME);
-			int score = preferences.getInt(KEY_SCORE+i, (HISCORE_LENGTH-i)*(25/HISCORE_LENGTH));
-			long date = preferences.getLong(KEY_DATE+i, DEFAULT_DATE);
-			int registeredId = preferences.getInt(KEY_REGISTERED_ID+i, DEFAULT_REGISTERED_ID);
+			String name = preferences.getString(KEY_NAME[gamelevel]+i, DEFAULT_NAME);
+			int score = preferences.getInt(KEY_SCORE[gamelevel]+i, DEFAULT_SCORE[gamelevel][i]);
+			long date = preferences.getLong(KEY_DATE[gamelevel]+i, DEFAULT_DATE);
+			int registeredId = preferences.getInt(KEY_REGISTERED_ID[gamelevel]+i, DEFAULT_REGISTERED_ID);
 			
 			hiScore[i] = new HiScore();
 			hiScore[i].setName(name);
@@ -95,27 +101,42 @@ public class HiScore {
 		return hiScore;
 	}
 	
+	public static HiScore[] readAllHiScore(Activity activity){
+		HiScore[] allHiScore = new HiScore[HISCORE_LENGTH*TamenchanDefine.GAME_LEVEL.length];
+		
+		for(int i=0;i<TamenchanDefine.GAME_LEVEL.length;i++){
+			HiScore[] hiScore = readHiScore(activity, i);
+			System.arraycopy(hiScore, 0, allHiScore, i*HISCORE_LENGTH, HISCORE_LENGTH);			
+		}
+		
+		return allHiScore;
+	}
+	
 	public static void writeHiScore(Activity activity, HiScore[] hiScore){
+		int gamelevel = TamenchanSetting.getGameLevel(activity);		
+		
 		SharedPreferences preferences =	activity.getSharedPreferences(HISCORE_PREF_NAME, Activity.MODE_PRIVATE);
 		SharedPreferences.Editor editor = preferences.edit();
 		
 		for(int i=0;i<hiScore.length;i++){
-			editor.putString(KEY_NAME+i, hiScore[i].getName());
-			editor.putInt(KEY_SCORE+i, hiScore[i].getScore());
-			editor.putLong(KEY_DATE+i, hiScore[i].getDate());
-			editor.putInt(KEY_REGISTERED_ID+i, hiScore[i].getRegisteredId());
+			editor.putString(KEY_NAME[gamelevel]+i, hiScore[i].getName());
+			editor.putInt(KEY_SCORE[gamelevel]+i, hiScore[i].getScore());
+			editor.putLong(KEY_DATE[gamelevel]+i, hiScore[i].getDate());
+			editor.putInt(KEY_REGISTERED_ID[gamelevel]+i, hiScore[i].getRegisteredId());
 		}
 		
 		editor.commit();
 	}
 
 	public static void clearHiScore(Activity activity){
+		int gamelevel = TamenchanSetting.getGameLevel(activity);		
+
 		HiScore[] hiScore = new HiScore[HISCORE_LENGTH];
 		
 		for(int i=0;i<hiScore.length;i++){
 			hiScore[i] = new HiScore();
 			hiScore[i].setName(DEFAULT_NAME);
-			hiScore[i].setScore((HISCORE_LENGTH-i)*(25/HISCORE_LENGTH));
+			hiScore[i].setScore(DEFAULT_SCORE[gamelevel][i]);
 			hiScore[i].setDate(DEFAULT_DATE);
 			hiScore[i].setRegisteredId(DEFAULT_REGISTERED_ID);
 		}

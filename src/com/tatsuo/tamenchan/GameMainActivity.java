@@ -1,5 +1,6 @@
 package com.tatsuo.tamenchan;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -9,17 +10,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.tatsuo.mahjonglib.Tehai;
+import com.tatsuo.mahjonglib.TenpaiChecker;
+import com.tatsuo.tamenchan.domain.TamenchanDefine;
 import com.tatsuo.tamenchan.domain.TamenchanScore;
 import com.tatsuo.tamenchan.domain.TamenchanSetting;
-import com.tatsuo.tamenchan.domain.Tehai;
-import com.tatsuo.tamenchan.domain.TenpaiChecker;
 import com.tatsuo.tamenchan.view.TimerView;
 
 public class GameMainActivity extends Activity {
@@ -31,6 +32,8 @@ public class GameMainActivity extends Activity {
 	private boolean judged = false;
 	private boolean questionStandBy = false;
 	private boolean questionShowing = false;
+	private int gameLevel = TamenchanDefine.GAMELEVEL_LOW;
+	private int haiType = 0;
 	
 	private Handler handler = new Handler();
     Timer tehaiOpenTimer = null;
@@ -44,9 +47,11 @@ public class GameMainActivity extends Activity {
 	
 	private static int[] BONUS_SCORE = new int[10];
 	
-	private static final int[] haiImageResourceId = new int[10];
 	private static final int[] haiImageId = new int[10];
 	private static final int[] tehaiImageId = new int[14];
+	private static final int[][][] haiImageResourceId = new int[3][10][2];
+	private static final int[][] kotsuhaiImageResourceId = new int[8][2];
+	private static final int urahaiImageResourceId = R.drawable.bk;
 	
 	private static final int ALPHA_SELECTED = 255;
 	private static final int ALPHA_NO_SELECTED = 100;
@@ -61,6 +66,10 @@ public class GameMainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gamemain);
+        
+        gameLevel = TamenchanSetting.getGameLevel(this);
+        haiType = TamenchanSetting.getHaiType(this);
+        setHaiImageResource();
         
         // ゲーム初期化
         tamenchanScore = new TamenchanScore();
@@ -96,6 +105,13 @@ public class GameMainActivity extends Activity {
 			timer.cancel();
 			timer.purge();
 		}    	
+    }
+    
+    private void setHaiImageResource(){
+    	for(int i=1;i<=9;i++){
+    		ImageView haiImage = (ImageView)findViewById(haiImageId[i]);
+    		haiImage.setImageResource(haiImageResourceId[haiType][i][0]);
+    	}
     }
     
     class HaiClickListener implements OnClickListener {
@@ -161,9 +177,11 @@ public class GameMainActivity extends Activity {
     	judged = false;
     	remainingTime = 20000;
     	
+    	int gamelevel = TamenchanSetting.getGameLevel(this);
     	TextView headerText = (TextView)findViewById(R.id.header);
-    	headerText.setText("Question："+tamenchanScore.getQuestion() + " / " + MAX_QUESTION 
-    			+"     Score："+tamenchanScore.getScore());
+    	headerText.setText("<"+TamenchanDefine.GAME_LEVEL[gamelevel]+">"
+    			+"  問題："+tamenchanScore.getQuestion() + " / " + MAX_QUESTION 
+    			+"    得点："+tamenchanScore.getScore());
     	
     	questionStandBy = false;
     	
@@ -180,7 +198,7 @@ public class GameMainActivity extends Activity {
 		questionShowing = false;
 		for(int i=1;i<=13;i++){
         	ImageView imageView = (ImageView)findViewById(tehaiImageId[i]);
-        	imageView.setImageResource(haiImageResourceId[0]);
+        	imageView.setImageResource(urahaiImageResourceId);
         }
 
         // 回答部分を初期化して表示
@@ -226,7 +244,15 @@ public class GameMainActivity extends Activity {
     	while(true){
     		haipaiCount++;
     		
-    		tehai.haipai();
+    		int[] presethai = new int[10];
+    		// 初級の場合は字牌の暗刻を一つ加える。
+    		if(gameLevel == TamenchanDefine.GAMELEVEL_LOW){
+        		presethai[0] = 3;
+        		haiImageResourceId[haiType][0] = kotsuhaiImageResourceId[(int)(Math.random()*7)+1];
+    		}
+    		
+    		tehai.haipai(presethai);
+    		
     		boolean[] machi = checker.checkMachihai(tehai);
     	
     		int machiNum = 0;
@@ -242,7 +268,7 @@ public class GameMainActivity extends Activity {
     		if(machiNum == questionMachiNum || machiNum >= RARE_MACHI
     			|| (haipaiCount >= 10 && machiNum > 0) ){
     			
-    	    	Log.i("MACHI -> ",questionMachiNum+" : "+machiNum+" : "+haipaiCount);
+//    	    	Log.i("MACHI -> ",questionMachiNum+" : "+machiNum+" : "+haipaiCount);
 
     	    	// 配牌回数が10回以下の場合は時間稼ぎ
     	    	for(int i=haipaiCount;i<=10;i++){
@@ -264,18 +290,42 @@ public class GameMainActivity extends Activity {
 						// 問題の準備ができてなければ待つ
 						while(questionStandBy == false){}
 						
-				        // 問題の手牌を表示
+				        // Listに数をセット
 				        int[] hai = tehai.getTehai();
-				        int num = 1;
+				        ArrayList<Integer> haiList = new ArrayList<Integer>();
 				        for(int i=1;i<hai.length;i++){
 				        	for(int j=0;j<hai[i];j++){
-				            	ImageView imageView = (ImageView)findViewById(tehaiImageId[num]);
-				            	imageView.setImageResource(haiImageResourceId[i]);
-				            	num++;
+				        		haiList.add(Integer.valueOf(i));
 				        	}
 				        }
+				        for(int i=0;i<hai[0];i++){
+			        		haiList.add(Integer.valueOf(0));
+				        }
+				        
+				        // 問題の手牌を表示
+				        if(gameLevel != TamenchanDefine.GAMELEVEL_HIGH){
+				        	// 初級/中級の場合
+				        	for(int i=0;i<haiList.size();i++){
+				        		int haiNum = haiList.get(i).intValue();
+				        		ImageView imageView = (ImageView)findViewById(tehaiImageId[i+1]);
+				        		imageView.setImageResource(haiImageResourceId[haiType][haiNum][0]);
+				        	}
+				        } else {
+				        	// 上級の場合（理牌なし）
+				        	for(int i=0;i<13;i++){
+				        		int num = (int)(Math.random()*haiList.size());
+				        		int haiNum = haiList.remove(num).intValue();
+				        		
+				        		// int side = (int)(Math.random()*2);
+				        		int side = 0; // 上下逆はさすがに難しすぎ＆画像がずれるので、当面は上下逆にはしない。
+				        		
+				        		ImageView imageView = (ImageView)findViewById(tehaiImageId[i+1]);
+				        		imageView.setImageResource(haiImageResourceId[haiType][haiNum][side]);
+				        	}
+				        }
+				        
 						questionShowing = true;
-
+						
 						// タイマーをスタート
 						startTimer();
 					}
@@ -436,16 +486,83 @@ public class GameMainActivity extends Activity {
 		haiImageId[8] = R.id.hai8;
 		haiImageId[9] = R.id.hai9;
 		
-		haiImageResourceId[0] = R.drawable.bk;
-		haiImageResourceId[1] = R.drawable.m1;
-		haiImageResourceId[2] = R.drawable.m2;
-		haiImageResourceId[3] = R.drawable.m3;
-		haiImageResourceId[4] = R.drawable.m4;
-		haiImageResourceId[5] = R.drawable.m5;
-		haiImageResourceId[6] = R.drawable.m6;
-		haiImageResourceId[7] = R.drawable.m7;
-		haiImageResourceId[8] = R.drawable.m8;
-		haiImageResourceId[9] = R.drawable.m9;
+		haiImageResourceId[0][0][0] = 0;
+		haiImageResourceId[0][1][0] = R.drawable.m1;
+		haiImageResourceId[0][2][0] = R.drawable.m2;
+		haiImageResourceId[0][3][0] = R.drawable.m3;
+		haiImageResourceId[0][4][0] = R.drawable.m4;
+		haiImageResourceId[0][5][0] = R.drawable.m5;
+		haiImageResourceId[0][6][0] = R.drawable.m6;
+		haiImageResourceId[0][7][0] = R.drawable.m7;
+		haiImageResourceId[0][8][0] = R.drawable.m8;
+		haiImageResourceId[0][9][0] = R.drawable.m9;
+		haiImageResourceId[0][0][1] = 0;
+		haiImageResourceId[0][1][1] = R.drawable.m1u;
+		haiImageResourceId[0][2][1] = R.drawable.m2u;
+		haiImageResourceId[0][3][1] = R.drawable.m3u;
+		haiImageResourceId[0][4][1] = R.drawable.m4u;
+		haiImageResourceId[0][5][1] = R.drawable.m5u;
+		haiImageResourceId[0][6][1] = R.drawable.m6u;
+		haiImageResourceId[0][7][1] = R.drawable.m7u;
+		haiImageResourceId[0][8][1] = R.drawable.m8u;
+		haiImageResourceId[0][9][1] = R.drawable.m9u;
+		haiImageResourceId[1][0][0] = 0;
+		haiImageResourceId[1][1][0] = R.drawable.p1;
+		haiImageResourceId[1][2][0] = R.drawable.p2;
+		haiImageResourceId[1][3][0] = R.drawable.p3;
+		haiImageResourceId[1][4][0] = R.drawable.p4;
+		haiImageResourceId[1][5][0] = R.drawable.p5;
+		haiImageResourceId[1][6][0] = R.drawable.p6;
+		haiImageResourceId[1][7][0] = R.drawable.p7;
+		haiImageResourceId[1][8][0] = R.drawable.p8;
+		haiImageResourceId[1][9][0] = R.drawable.p9;
+		haiImageResourceId[1][0][1] = 0;
+		haiImageResourceId[1][1][1] = R.drawable.p1u;
+		haiImageResourceId[1][2][1] = R.drawable.p2u;
+		haiImageResourceId[1][3][1] = R.drawable.p3u;
+		haiImageResourceId[1][4][1] = R.drawable.p4u;
+		haiImageResourceId[1][5][1] = R.drawable.p5u;
+		haiImageResourceId[1][6][1] = R.drawable.p6u;
+		haiImageResourceId[1][7][1] = R.drawable.p7u;
+		haiImageResourceId[1][8][1] = R.drawable.p8u;
+		haiImageResourceId[1][9][1] = R.drawable.p9u;
+		haiImageResourceId[2][0][0] = 0;
+		haiImageResourceId[2][1][0] = R.drawable.s1;
+		haiImageResourceId[2][2][0] = R.drawable.s2;
+		haiImageResourceId[2][3][0] = R.drawable.s3;
+		haiImageResourceId[2][4][0] = R.drawable.s4;
+		haiImageResourceId[2][5][0] = R.drawable.s5;
+		haiImageResourceId[2][6][0] = R.drawable.s6;
+		haiImageResourceId[2][7][0] = R.drawable.s7;
+		haiImageResourceId[2][8][0] = R.drawable.s8;
+		haiImageResourceId[2][9][0] = R.drawable.s9;
+		haiImageResourceId[2][0][1] = 0;
+		haiImageResourceId[2][1][1] = R.drawable.s1u;
+		haiImageResourceId[2][2][1] = R.drawable.s2u;
+		haiImageResourceId[2][3][1] = R.drawable.s3u;
+		haiImageResourceId[2][4][1] = R.drawable.s4u;
+		haiImageResourceId[2][5][1] = R.drawable.s5u;
+		haiImageResourceId[2][6][1] = R.drawable.s6u;
+		haiImageResourceId[2][7][1] = R.drawable.s7u;
+		haiImageResourceId[2][8][1] = R.drawable.s8u;
+		haiImageResourceId[2][9][1] = R.drawable.s9u;
+
+		kotsuhaiImageResourceId[0][0] = 0;
+		kotsuhaiImageResourceId[1][0] = R.drawable.j1;
+		kotsuhaiImageResourceId[2][0] = R.drawable.j2;
+		kotsuhaiImageResourceId[3][0] = R.drawable.j3;
+		kotsuhaiImageResourceId[4][0] = R.drawable.j4;
+		kotsuhaiImageResourceId[5][0] = R.drawable.j5;
+		kotsuhaiImageResourceId[6][0] = R.drawable.j6;
+		kotsuhaiImageResourceId[7][0] = R.drawable.j7;
+		kotsuhaiImageResourceId[0][1] = 0;
+		kotsuhaiImageResourceId[1][1] = R.drawable.j1u;
+		kotsuhaiImageResourceId[2][1] = R.drawable.j2u;
+		kotsuhaiImageResourceId[3][1] = R.drawable.j3u;
+		kotsuhaiImageResourceId[4][1] = R.drawable.j4u;
+		kotsuhaiImageResourceId[5][1] = R.drawable.j5u;
+		kotsuhaiImageResourceId[6][1] = R.drawable.j6u;
+		kotsuhaiImageResourceId[7][1] = R.drawable.j7u;
 	}
 	
 }

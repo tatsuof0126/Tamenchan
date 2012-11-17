@@ -72,7 +72,7 @@ public class HiScoreTabActivity extends TabActivity {
 	private int rankingNum;
 	
     private RequestToken requestToken;	
-
+    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -97,6 +97,13 @@ public class HiScoreTabActivity extends TabActivity {
 
 		tabHost.setCurrentTab(0);
 		tabHost.setOnTabChangedListener(new TabChangeListener());
+		
+		// タイトルを設定
+		int gamelevel = TamenchanSetting.getGameLevel(this);
+		TextView myHiscoreView = (TextView)findViewById(R.id.myhiscoretitle);
+		myHiscoreView.setText("私のハイスコア <"+TamenchanDefine.GAME_LEVEL[gamelevel]+">");
+		TextView ourHiscoreView = (TextView)findViewById(R.id.ourhiscoretitle);
+		ourHiscoreView.setText("みんなのハイスコア <"+TamenchanDefine.GAME_LEVEL[gamelevel]+">");
 		
 		// スコア・メッセージ表示部の表示を決定
         LinearLayout linearLayout = (LinearLayout)findViewById(R.id.hiscoretab1);
@@ -222,7 +229,8 @@ public class HiScoreTabActivity extends TabActivity {
 			RegisteredHiScore[] registeredHiScore = null;
 			
 	    	HttpClient client = new DefaultHttpClient();
-	    	HttpUriRequest request = new HttpGet(TamenchanDefine.SERVER_URI + TamenchanDefine.HISCORELIST_PATH);
+	    	HttpUriRequest request = new HttpGet(TamenchanDefine.SERVER_URI + TamenchanDefine.HISCORELIST_PATH 
+		    	+ "?gamelevel=" + TamenchanSetting.getGameLevel(HiScoreTabActivity.this));
 	    	HttpResponse response = null;
 	    	HttpEntity entity = null;
 	    	String jsonStr = null;
@@ -277,7 +285,8 @@ public class HiScoreTabActivity extends TabActivity {
 			RegisteredHiScore[] registeredHiScore = null;
 
 	    	HttpClient client = new DefaultHttpClient();
-	    	HttpPost request = new HttpPost(TamenchanDefine.SERVER_URI + TamenchanDefine.HISCORELIST_PATH);
+	    	HttpPost request = new HttpPost(TamenchanDefine.SERVER_URI + TamenchanDefine.HISCORELIST_PATH
+	    		+ "?gamelevel=" + TamenchanSetting.getGameLevel(HiScoreTabActivity.this));
 	    	HttpResponse response = null;
 	    	HttpEntity entity = null;
 	    	String jsonStr = null;
@@ -445,13 +454,15 @@ public class HiScoreTabActivity extends TabActivity {
     }
     
     private String makeTweetString(int tweetmode){
+    	int gamelevel = TamenchanSetting.getGameLevel(this);
     	HiScore[] hiScore = HiScore.readHiScore(this);
     	
     	if(tweetmode == TWEET_LOCAL_HISCORE){
-    		return hiScore[myRank].getName()+"さんの得点は"
+    		return hiScore[myRank].getName()+"さんの得点<"+TamenchanDefine.GAME_LEVEL[gamelevel]+">は"
     			+hiScore[myRank].getScore()+"点でした。 #ためんちゃん http://bit.ly/ST1EfJ";    		
     	} else {
-    		return "みんなのハイスコアに"+rankingNum+"件ランクインしています。最高位は"
+    		return "みんなのハイスコア<"+TamenchanDefine.GAME_LEVEL[gamelevel]+">に"
+    			+rankingNum+"件ランクインしています。最高位は"
 				+topRank+"位("+hiScore[0].getScore()+"点)です。 #ためんちゃん http://bit.ly/ST1EfJ";
     	}
     }
